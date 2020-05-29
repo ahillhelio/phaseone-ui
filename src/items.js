@@ -11,13 +11,17 @@ class Item extends Component {
               
             ],
             isCreate : true,
+            isToggleOn : true,
+            displayItems : []
         }
+        this.showActivity = this.showActivity.bind(this);
+
     }
 
     getItem = () => {
         fetch(`${process.env.REACT_APP_API_URL}/api/items`) 
         .then(response => response.json())
-        .then(data => this.setState( {item : data, isCreate: true } ));
+        .then(data => this.setState( {item : data, displayItems : data, isCreate: true } ));
     };
 
     sortQuantity () {
@@ -25,8 +29,22 @@ class Item extends Component {
         arrayToSort.sort((a,b) => {
             return a.quantity-b.quantity;
         })
-        this.setState ({item : arrayToSort})
+        this.setState ({displayItems : arrayToSort})
     }
+
+    showActivity () {
+        const itemsActive = this.state.item.filter(item => item.isActive === this.state.isToggleOn);
+        // const renderActive = itemsActive.map ((item) => <li key={item.name}>{item.name}</li>)
+        this.setState ({displayItems : itemsActive, isToggleOn : !this.state.isToggleOn})
+    }
+
+    // showActivity () {
+    //     const arrayToFilter = Object.assign([], this.state.item)
+    //     arrayToFilter.filter((a,b) => {
+    //         return a.isActive-b.isActive;
+    //     })
+    //     this.setState ({item : arrayToFilter})
+    // }
 
     deleteItem = (id) => {
         fetch(`${process.env.REACT_APP_API_URL}/api/items/${id}`, {
@@ -62,7 +80,7 @@ class Item extends Component {
 
 
     render(){ 
-        const displayItem = this.state.item.map((item) => {
+        const displayItem = this.state.displayItems.map((item) => {
             
             return <div> 
                         {item.name}/
@@ -80,14 +98,19 @@ class Item extends Component {
                   </div>       
         })
 
-    console.log(this.state.item);
+        console.log(this.state.item);
 
         return (
             <>
             <h3>MY CART</h3>
             {this.renderForm()}
-            <button></button>
             {displayItem}
+            <br></br>
+            <button onClick={() => this.sortQuantity()}>Sort by Quantity</button>
+            <br></br>
+            <button onClick={this.showActivity}>
+            {this.state.isToggleOn ? 'Show Active' : 'Show Inactive'}
+            </button>
             </>
         )
 

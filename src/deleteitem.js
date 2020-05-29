@@ -5,7 +5,7 @@ const DeleteItem = ({item, deleteItem, updateItem}) => {
         <>
         <button onClick={() => updateItem(item)}>Edit Item</button>
         <br></br>
-        <button onClick={() => deleteItem(item._id)}>Deactivate</button>
+        <button onClick={() => deleteItem(item._id)}>Delete Item</button>
         </>
     )
 }
